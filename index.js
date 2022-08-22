@@ -7,7 +7,7 @@ const mapForListPlayers = new Map();
 const GROUP_CHAT_ID             = -418001771;
 const INFO_ABOUT_GAME           = 'ВТОРНИК, ст. Гомсельмаш, 19.30-21.30, 2р.';
 const URL_FOR_GREETING_STICKER  = 'https://chpic.su/_data/stickers/g/Gvolley/Gvolley_014.webp';
-const MAX_PLAYERS               = 2;
+const MAX_PLAYERS               = 12;
 
 // let strAnnouncingGame = INFO_ABOUT_GAME
 
@@ -54,7 +54,7 @@ async function start() {
         { command: '/sticker', description: 'Print name user' },
     ] );
     
-    // await bot.sendSticker( GROUP_CHAT_ID, URL_FOR_GREETING_STICKER );
+    await bot.sendSticker( GROUP_CHAT_ID, URL_FOR_GREETING_STICKER );
     await bot.sendMessage( GROUP_CHAT_ID, 'привет, кожаные мешки)) записываемся на ближайшую игру\n' );
     await bot.sendMessage( GROUP_CHAT_ID, INFO_ABOUT_GAME, signUpForGamaOptions );
 
