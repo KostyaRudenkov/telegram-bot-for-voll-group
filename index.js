@@ -2,14 +2,28 @@ const TelegramApi = require( 'node-telegram-bot-api' );
 const token = '5563097568:AAGFOWL5-Gy1-vYwC1xL-Oem3zIt-qcYuOk';
 const bot = new TelegramApi( token, { polling: true } );
 
-const mapForListPlayers = new Map();
+const chatsID = { NEYDERZIMIE: -418001771, TEST_GROUP: -682186863, };
 
-const GROUP_CHAT_ID             = -418001771;
+const GROUP_CHAT_ID             = chatsID.TEST_GROUP;
 const INFO_ABOUT_GAME           = 'ВТОРНИК, ст. Гомсельмаш, 19.30-21.30, 2р.';
 const URL_FOR_GREETING_STICKER  = 'https://chpic.su/_data/stickers/g/Gvolley/Gvolley_014.webp';
+const URL_FOR_EMPTY_LIST        = 'https://chpic.su/_data/stickers/r/RoboSanta/RoboSanta_012.webp';
+const URL_LOOKING_FOR_PLAYERS   = 'https://chpic.su/_data/stickers/r/RoboSanta/RoboSanta_010.webp';
+const URL_GATHERING_PEOPLE_OVER = 'https://chpic.su/_data/stickers/r/RoboSanta/RoboSanta_003.webp';
 const MAX_PLAYERS               = 12;
 
-// let strAnnouncingGame = INFO_ABOUT_GAME
+
+const mapForListPlayers = new Map();
+const rezervPlayers = {
+
+    992246936: '<< резерв >>',
+    1282219634: '<< резерв >>',
+}
+
+for ( let item of Object.entries( rezervPlayers ) ) {
+    
+    mapForListPlayers.set( Number( item[ 0 ] ), item[ 1 ] );
+}
 
 // const signUpForGamaOptions = {
 //     reply_markup: JSON.stringify( {
@@ -54,8 +68,8 @@ async function start() {
         { command: '/sticker', description: 'Print name user' },
     ] );
     
-    await bot.sendSticker( GROUP_CHAT_ID, URL_FOR_GREETING_STICKER );
-    await bot.sendMessage( GROUP_CHAT_ID, 'привет, кожаные мешки)) записываемся на ближайшую игру\n' );
+    // await bot.sendSticker( GROUP_CHAT_ID, URL_FOR_GREETING_STICKER );
+    // await bot.sendMessage( GROUP_CHAT_ID, 'привет, кожаные мешки)) записываемся на ближайшую игру\n' );
     await bot.sendMessage( GROUP_CHAT_ID, INFO_ABOUT_GAME, signUpForGamaOptions );
 
     bot.on( 'message', async msg => {
@@ -68,21 +82,29 @@ async function start() {
         const userSurname   = msg.from.last_name || '';
         const fullName      = getFullNameOfPlayers( userName, userSurname );
 
-        if ( text === '/info@NoUnHumanoBot' ) {
+        // if ( text === '/info@NoUnHumanoBot' ) {
 
-            console.log( chatId );
-        }
+        //     console.log( msg );
+        // }
 
         if ( text === '+' ) {
             
             if ( mapForListPlayers.has( userID ) ) {
-                
+
+                if ( mapForListPlayers.get( userID ) === '<< резерв >>' ) {
+                    
+                    mapForListPlayers.set( userID, fullName );
+
+                    await bot.sendMessage( chatId, `<< ${ fullName } >> подтвердил свой резерв` );
+                    return bot.sendMessage( chatId, `свободных мест - ${ MAX_PLAYERS - getCurrentNumberOfPlayers( mapForListPlayers ) }` );
+                }
+
                 return bot.sendMessage( chatId, `<< ${ fullName } >> уже есть в списке` );
             }
 
             if ( getCurrentNumberOfPlayers( mapForListPlayers ) === MAX_PLAYERS ) {
 
-                return bot.sendMessage( chatId, `мест нет, маякну, если появятся` );
+                return bot.sendMessage( chatId, `мест нет, сообщу, если появятся` );
             }
             
             mapForListPlayers.set( userID, fullName );
@@ -90,8 +112,8 @@ async function start() {
 
             if ( getCurrentNumberOfPlayers( mapForListPlayers ) === MAX_PLAYERS ) {
 
-                await bot.sendSticker( chatId, 'https://chpic.su/_data/stickers/r/RoboSanta/RoboSanta_003.webp' );
-                return bot.sendMessage( chatId, `!!! набор окончен !!! маякну, если появятся места` );
+                await bot.sendSticker( chatId, URL_GATHERING_PEOPLE_OVER );
+                return bot.sendMessage( chatId, `!!! набор окончен !!! сообщу, если появятся места` );
             }
 
             return bot.sendMessage( chatId, `осталось ${ MAX_PLAYERS - getCurrentNumberOfPlayers( mapForListPlayers ) } мест(а/о)` );
@@ -108,14 +130,14 @@ async function start() {
                 
                 mapForListPlayers.delete( userID );
 
-                await bot.sendMessage( chatId, `--- ${ fullName } --- удален(а) из списка` );
-                await bot.sendSticker( chatId, 'https://chpic.su/_data/stickers/r/RoboSanta/RoboSanta_010.webp' );
+                await bot.sendMessage( chatId, `--- ${ fullName } --- выбыл(а) из списка` );
+                await bot.sendSticker( chatId, URL_LOOKING_FOR_PLAYERS );
                 return bot.sendMessage( chatId, `появилось место, налетай` );       
             }
 
             mapForListPlayers.delete( userID );
 
-            await bot.sendMessage( chatId, `--- ${ fullName } --- удален(а) из списка` );
+            await bot.sendMessage( chatId, `--- ${ fullName } --- выбыл(а) из списка` );
             return bot.sendMessage( chatId, `осталось ${ MAX_PLAYERS - getCurrentNumberOfPlayers( mapForListPlayers ) } мест(а/о)` );
         }
 
@@ -126,7 +148,7 @@ async function start() {
 
             if ( !getCurrentNumberOfPlayers( mapForListPlayers ) ) {
                 
-                await bot.sendSticker( chatId, 'https://chpic.su/_data/stickers/r/RoboSanta/RoboSanta_012.webp' );
+                await bot.sendSticker( chatId, URL_FOR_EMPTY_LIST );
                 return bot.sendMessage( chatId, 'пока никто не записался' );
             }
 
@@ -158,8 +180,8 @@ async function start() {
 
             if ( getCurrentNumberOfPlayers( mapForListPlayers ) === MAX_PLAYERS ) {
 
-                await bot.sendSticker( chatId, 'https://chpic.su/_data/stickers/r/RoboSanta/RoboSanta_003.webp' );
-                return bot.sendMessage( chatId, `!!!набор окончен!!! маякну, если появятся места` );
+                await bot.sendSticker( chatId, URL_GATHERING_PEOPLE_OVER );
+                return bot.sendMessage( chatId, `!!!набор окончен!!! сообщу, если появятся места` );
             }
         }
 
@@ -170,7 +192,8 @@ async function start() {
                 if ( getCurrentNumberOfPlayers( mapForListPlayers ) === MAX_PLAYERS ) {
 
                     mapForListPlayers.delete( userID + userID );
-                    await bot.sendSticker( chatId, 'https://chpic.su/_data/stickers/r/RoboSanta/RoboSanta_010.webp' );
+
+                    await bot.sendSticker( chatId, URL_LOOKING_FOR_PLAYERS );
                     await bot.sendMessage( chatId, `--- ${ fullName } --- удалил(а) своего другана` );
                     return bot.sendMessage( chatId, `появилось место, налетай` );
                 }
