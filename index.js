@@ -2,7 +2,7 @@ const TelegramApi = require( 'node-telegram-bot-api' );
 const token = '5563097568:AAGFOWL5-Gy1-vYwC1xL-Oem3zIt-qcYuOk';
 const bot = new TelegramApi( token, { polling: true } );
 
-const chatsID = { NEYDERZIMIE: -418001771, TEST_GROUP: -682186863, };
+const chatsID = { NEYDERZIMIE: -1001641531688, TEST_GROUP: -682186863, };
 
 const GROUP_CHAT_ID             = chatsID.NEYDERZIMIE;
 const INFO_ABOUT_GAME           = 'ВТОРНИК, ст. Гомсельмаш, 19.30-21.30, 2р.';
@@ -71,15 +71,15 @@ function randomInteger( min, max ) {
 
 async function start() {
 
-    bot.setMyCommands( [
+    // bot.setMyCommands( [
 
-        { command: '/info', description: 'Print name user' },
-        { command: '/sticker', description: 'Print name user' },
-    ] );
+    //     { command: '/info', description: 'Print name user' },
+    //     { command: '/sticker', description: 'Print name user' },
+    // ] );
     
-    await bot.sendSticker( GROUP_CHAT_ID, URL_FOR_GREETING_STICKER );
-    await bot.sendMessage( GROUP_CHAT_ID, 'привет, кожаные мешки)) записываемся на ближайшую игру\n' );
-    await bot.sendMessage( GROUP_CHAT_ID, INFO_ABOUT_GAME, signUpForGamaOptions );
+    // await bot.sendSticker( GROUP_CHAT_ID, URL_FOR_GREETING_STICKER );
+    // await bot.sendMessage( GROUP_CHAT_ID, 'привет, кожаные мешки)) записываемся на ближайшую игру\n' );
+    // await bot.sendMessage( GROUP_CHAT_ID, INFO_ABOUT_GAME, signUpForGamaOptions );
 
     bot.on( 'message', async msg => {
     
@@ -90,6 +90,8 @@ async function start() {
         const userIDPlusOne = userID + userID;
         const userSurname   = msg.from.last_name || '';
         const fullName      = getFullNameOfPlayers( userName, userSurname );
+
+        if ( text === '/info@NoUnHumanoBot' ) { console.log( msg ); }
         
         if ( text === '+' ) {
             
