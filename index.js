@@ -77,9 +77,9 @@ async function start() {
     //     { command: '/sticker', description: 'Print name user' },
     // ] );
     
-    // await bot.sendSticker( GROUP_CHAT_ID, URL_FOR_GREETING_STICKER );
-    // await bot.sendMessage( GROUP_CHAT_ID, 'привет, кожаные мешки)) записываемся на ближайшую игру\n' );
-    // await bot.sendMessage( GROUP_CHAT_ID, INFO_ABOUT_GAME, signUpForGamaOptions );
+    await bot.sendSticker( GROUP_CHAT_ID, URL_FOR_GREETING_STICKER );
+    await bot.sendMessage( GROUP_CHAT_ID, 'привет, кожаные мешки)) записываемся на ближайшую игру\n' );
+    await bot.sendMessage( GROUP_CHAT_ID, INFO_ABOUT_GAME, signUpForGamaOptions );
 
     bot.on( 'message', async msg => {
     
