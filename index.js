@@ -4,7 +4,7 @@ const bot = new TelegramApi( token, { polling: true } );
 
 const chatsID = { NEYDERZIMIE: -418001771, TEST_GROUP: -682186863, };
 
-const GROUP_CHAT_ID             = chatsID.TEST_GROUP;
+const GROUP_CHAT_ID             = chatsID.NEYDERZIMIE;
 const INFO_ABOUT_GAME           = 'ВТОРНИК, ст. Гомсельмаш, 19.30-21.30, 2р.';
 const URL_FOR_GREETING_STICKER  = 'https://chpic.su/_data/stickers/g/Gvolley/Gvolley_014.webp';
 const URL_FOR_EMPTY_LIST        = 'https://chpic.su/_data/stickers/r/RoboSanta/RoboSanta_012.webp';
