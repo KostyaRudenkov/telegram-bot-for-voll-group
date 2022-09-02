@@ -76,8 +76,6 @@ async function restartListOfPlayers( chatId ) {
 }
 //==========================================supporting_functions=======================================
 
-let t = 0;
-
 async function start() {
 
     bot.setMyCommands( [
@@ -231,7 +229,7 @@ async function start() {
 
         if ( text === 'инфа' ) {
             
-            await bot.sendMessage( GROUP_CHAT_ID, INFO_ABOUT_GAME );
+            await bot.sendMessage( chatId, INFO_ABOUT_GAME );
             return bot.sendMessage( chatId, `количество мест - ${ MAX_PLAYERS }` );
         }
 
