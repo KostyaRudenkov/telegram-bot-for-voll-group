@@ -4,8 +4,8 @@ const bot = new TelegramApi( token, { polling: true } );
 
 
 //=======================================global-variables=====================================
-const chatsID                   = { NEYDERZIMIE: -1001641531688, TEST_GROUP: -1001793375329, };
-const GROUP_CHAT_ID             = chatsID.TEST_GROUP;
+// const chatsID                   = { NEYDERZIMIE: -1001641531688, TEST_GROUP: -1001793375329, };
+// const GROUP_CHAT_ID             = chatsID.TEST_GROUP;
 const URL_FOR_GREETING_STICKER  = 'https://chpic.su/_data/stickers/g/Gvolley/Gvolley_014.webp';
 const URL_FOR_EMPTY_LIST        = 'https://chpic.su/_data/stickers/r/RoboSanta/RoboSanta_012.webp';
 const URL_GATHERING_PEOPLE_OVER = 'https://chpic.su/ru/stickers/simpsonspackss/';
@@ -15,6 +15,7 @@ const arrUserIdWithSpecPermits  = [ 992246936, 1282219634 ];
 
 let INFO_ABOUT_GAME = 'в данный момент набор на игру не идет';
 let MAX_PLAYERS     = 0;
+let infoGameBefore  = '';
 let maxPrlsBefore   = 0;
 //=======================================global-variables=====================================
 //=======================================global-objects=======================================
@@ -107,6 +108,7 @@ async function start() {
                 
                 INFO_ABOUT_GAME = infoGame;
                 MAX_PLAYERS     = Number( maxPlrs );
+                infoGameBefore  = INFO_ABOUT_GAME;
                 maxPrlsBefore   = MAX_PLAYERS;
 
                 restartListOfPlayers( chatId );
@@ -116,6 +118,7 @@ async function start() {
                 
                 restartListOfPlayers( chatId );
                 MAX_PLAYERS = maxPrlsBefore;
+                INFO_ABOUT_GAME = infoGameBefore;
             }
 
             if ( text === '/+1' ) {
