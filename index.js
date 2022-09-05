@@ -6,8 +6,8 @@ const bot = new TelegramApi( token, { polling: true } );
 //=======================================global-variables=====================================
 // const chatsID                   = { NEYDERZIMIE: -1001641531688, TEST_GROUP: -1001793375329, };
 // const GROUP_CHAT_ID             = chatsID.TEST_GROUP;
-const URL_FOR_GREETING_STICKER  = 'https://chpic.su/_data/stickers/g/Gvolley/Gvolley_014.webp';
-const URL_FOR_EMPTY_LIST        = 'https://chpic.su/_data/stickers/r/RoboSanta/RoboSanta_012.webp';
+const URL_FOR_GREETING_STICKER  = 'https://chpic.su/_data/stickers/t/the_best_simpsons/the_best_simpsons_039.webp'; //'https://chpic.su/_data/stickers/g/Gvolley/Gvolley_014.webp';
+const URL_FOR_EMPTY_LIST        = 'https://chpic.su/_data/stickers/s/SmeshnayaSemya/SmeshnayaSemya_006.webp';
 const URL_GATHERING_PEOPLE_OVER = 'https://chpic.su/ru/stickers/simpsonspackss/';
 const RESERVE_NAMING            = '--- reserved ---';
 const mapForListPlayers         = new Map();
@@ -17,6 +17,7 @@ let INFO_ABOUT_GAME = 'в данный момент набор на игру н�
 let MAX_PLAYERS     = 0;
 let infoGameBefore  = '';
 let maxPrlsBefore   = 0;
+let reserveBefore   = false;
 //=======================================global-variables=====================================
 //=======================================global-objects=======================================
 const objOfReservedSeats = {
@@ -66,13 +67,15 @@ function randomInteger( min, max ) {
     return Math.floor( rand );
 }
 
-async function restartListOfPlayers( chatId ) {
+async function restartListOfPlayers( chatId, reserve = false ) {
     mapForListPlayers.clear();
-    for ( let item of Object.entries( objOfReservedSeats ) ) {
-        mapForListPlayers.set( Number( item[ 0 ] ), item[ 1 ] );
+    if ( reserve ) {
+        for ( let item of Object.entries( objOfReservedSeats ) ) {
+            mapForListPlayers.set( Number( item[ 0 ] ), item[ 1 ] );
+        }
     }
     await bot.sendSticker( chatId, URL_FOR_GREETING_STICKER );
-    await bot.sendMessage( chatId, 'привет, кожаные мешки)) записываемся на ближайшую игру\n' );
+    await bot.sendMessage( chatId, 'Воууу! Здесь игру подвезли, записываемся)' );
     await bot.sendMessage( chatId, INFO_ABOUT_GAME, signUpForGamaOptions );
 }
 //==========================================supporting_functions=======================================
@@ -81,7 +84,8 @@ async function start() {
 
     bot.setMyCommands( [
 
-        { command: '/start', description: 'restart list of players' },
+        { command: '/start', description: 'start bot' },
+        { command: '/gde_i_kogda', description: 'где и по каким дням играем' },
     ] );
 
     bot.on( 'message', async msg => {
@@ -94,29 +98,34 @@ async function start() {
         const userSurname   = msg.from.last_name || '';
         const fullName      = getFullNameOfPlayers( userName, userSurname );
 
-
-        if ( text === '/info@NoUnHumanoBot' ) { console.log( msg ); }
-
+        if ( text === '/gde_i_kogda@NoUnHumanoBot' ) {
+            
+            return bot.sendMessage( chatId, 'стадион Гомсельмаш \n по вторникам, 20.00-21.45' );
+        }
         
         if ( arrUserIdWithSpecPermits.includes( userID ) ) {
-
-            //   /ВТОРНИК, ст. Гомсельмаш, 19.30-21.30, 2р. * 5
             
-            if ( text.split( '*' ).length === 2 ) {
+            if ( text === '/start@NoUnHumanoBot' ) { console.log( msg ); }
+            
+            //   /ВТОРНИК, ст. Гомсельмаш, 19.30-21.30, 2р. * 5
+
+            if ( text.split( '*' ).length === 2 || text.split( '*' ).length === 3 ) {
                 
-                let [ infoGame, maxPlrs ] = text.slice( 1 ).split( '*' );
+                let [ infoGame, maxPlrs, reserve ] = text.slice( 1 ).split( '*' );
                 
                 INFO_ABOUT_GAME = infoGame;
                 MAX_PLAYERS     = Number( maxPlrs );
-                infoGameBefore  = INFO_ABOUT_GAME;
-                maxPrlsBefore   = MAX_PLAYERS;
+                
+                infoGameBefore = INFO_ABOUT_GAME;
+                maxPrlsBefore  = MAX_PLAYERS;
+                reserveBefore  = reserve;  
 
-                restartListOfPlayers( chatId );
-            }
+                restartListOfPlayers( chatId, reserve );
+            } 
 
             if ( text === '/restart' ) { 
                 
-                restartListOfPlayers( chatId );
+                restartListOfPlayers( chatId, reserveBefore );
                 MAX_PLAYERS = maxPrlsBefore;
                 INFO_ABOUT_GAME = infoGameBefore;
             }
@@ -126,7 +135,7 @@ async function start() {
                 MAX_PLAYERS++;
 
                 await bot.sendMessage( chatId, 'число мест изменено' );
-                await bot.sendMessage( chatId, `свободных мест - ${ getNumberOfVacancies() }` );
+                return bot.sendMessage( chatId, `свободных мест - ${ getNumberOfVacancies() }` );
             }
 
             if ( text === '/-1' ) {
@@ -134,7 +143,7 @@ async function start() {
                 MAX_PLAYERS--;
 
                 await bot.sendMessage( chatId, 'число мест изменено' );
-                await bot.sendMessage( chatId, `свободных мест - ${ getNumberOfVacancies() }` );
+                return bot.sendMessage( chatId, `свободных мест - ${ getNumberOfVacancies() }` );
             }
 
             if ( text === '/stop' ) {
@@ -146,12 +155,13 @@ async function start() {
                 await bot.sendMessage( chatId, 'ок, отдыхаем' );
                 return bot.sendSticker( chatId, 'https://chpic.su/_data/stickers/s/SmeshnayaSemya/SmeshnayaSemya_003.webp' );
             }
-        }
+        } 
      
         if ( text === '+' ) {
 
             if ( MAX_PLAYERS === 0 ) {
 
+                await bot.sendSticker( chatId, URL_FOR_EMPTY_LIST );
                 return bot.sendMessage( chatId, 'набор на игру закрыт' );
             }
             
@@ -217,10 +227,14 @@ async function start() {
             let str    = '';
             let number = 1;
 
+            if ( MAX_PLAYERS === 0 ) {
+
+                return bot.sendMessage( chatId, 'набор на игру закрыт' );
+            }
+
             if ( !mapForListPlayers.size ) {
                 
-                await bot.sendSticker( chatId, URL_FOR_EMPTY_LIST );
-                return bot.sendMessage( chatId, 'пока никто не записался или набор еще не начался' );
+                return bot.sendMessage( chatId, 'пока никто не записался' );
             }
 
             mapForListPlayers.forEach( item => str += `${ number++ }. ${ item } \n` );
