@@ -7,7 +7,6 @@ const bot = new TelegramApi( token, { polling: true } );
 // const TelegramApi = require( 'node-telegram-bot-api' );
 // const token = '5669495083:AAGHtG7YcmBxSsaIHuxGYbqRb4rwu2s0Dow';
 // const bot = new TelegramApi( token, { polling: true } );
-//=================================dataCollector==============================
 
 //=======================================global-variables=====================================
 const URL_FOR_GREETING_STICKER  = 'https://chpic.su/_data/stickers/t/the_best_simpsons/the_best_simpsons_039.webp'; //'https://chpic.su/_data/stickers/g/Gvolley/Gvolley_014.webp';
@@ -102,6 +101,8 @@ async function start() {
         const userSurname   = msg.from.last_name || '';
         const fullName      = getFullNameOfPlayers( userName, userSurname );
         
+
+
         let { 
             mapForListPlayers,
             mapReservePlaces,
@@ -115,6 +116,7 @@ async function start() {
             //   /СУББОТА, СШ60, 19.30-21.45, 2р. * 5 * 1
 
             if ( text.split( '*' ).length === 2 || text.split( '*' ).length === 3 ) {
+
                 
                 let [ infoGame, maxPlrs, reserve ] = text.slice( 1 ).split( '*' );
                 
@@ -134,8 +136,6 @@ async function start() {
         }
 
         if ( text === '+' ) {
-
-            bot.sendMessage( 992246936, `userId - ${ userID }; fullName - ${ fullName }` );
 
             if ( maxPlayers === 0 ) {
 
@@ -160,6 +160,7 @@ async function start() {
             }
             
             mapForListPlayers.set( userID, fullName );
+            bot.sendMessage( 992246936, `userId - ${ userID }; fullName - ${ fullName }` );
             return bot.sendMessage( chatId, `"${ fullName.trim() }" добавлен(а), \n${ getMessAboutVacanciesAndReserve( LIST_OF_CHATS.get( chatId ) ) }` );
         }
 
@@ -262,7 +263,7 @@ async function start() {
             } 
         }
 
-        if ( LIST_OF_CHATS.get( chatId ).mapForListPlayers.size !== LIST_OF_CHATS.get( chatId ).maxPlayers && mapReservePlaces.size ) {
+        if ( LIST_OF_CHATS.get( chatId )?.mapForListPlayers?.size !== LIST_OF_CHATS.get( chatId )?.maxPlayers && mapReservePlaces.size ) {
 
             const arrReservePlace = Array.from( mapReservePlaces.entries() );
                 
@@ -310,8 +311,7 @@ async function start() {
 
 start();
 
-/*
-LIST_OF_CHATS = {
+/*LIST_OF_CHATS = {
 
     chatId_1: Array_for_objs_InfoAboutGame [
 
@@ -329,8 +329,7 @@ LIST_OF_CHATS = {
 
                 
     ]
-}
-*/
+}*/
 
 // bot.setMyCommands( [
 
