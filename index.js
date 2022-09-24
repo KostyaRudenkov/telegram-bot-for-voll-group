@@ -48,9 +48,8 @@ const addToReserveMapOptions = {
         ]
     } )
 }
-//=======================================global-objects====================================
 
-//==========================================supporting_functions=======================================
+//=======================================supporting_functions====================================
 function InfoAboutGame( infoGame, maxPlrs ) {
     this.mapForListPlayers = new Map();
     this.mapReservePlaces  = new Map();
@@ -101,8 +100,6 @@ async function start() {
         const userSurname   = msg.from.last_name || '';
         const fullName      = getFullNameOfPlayers( userName, userSurname );
         
-
-
         let { 
             mapForListPlayers,
             mapReservePlaces,
@@ -151,7 +148,7 @@ async function start() {
                     return bot.sendMessage( chatId, `"${ fullName.trim() }" резерв снят, \n${ getMessAboutVacanciesAndReserve( LIST_OF_CHATS.get( chatId ) ) }` );
                 }
 
-                return bot.sendMessage( chatId, `"${ fullName }" уже есть в списке` );
+                return bot.sendMessage( chatId, `"${ fullName }" в основном списке` );
             }
 
             if ( mapForListPlayers.size === maxPlayers ) {
@@ -214,7 +211,6 @@ async function start() {
 
         if ( text === 'инфа' ) {
 
-            console.log( LIST_OF_CHATS );
             return bot.sendMessage( chatId, `${ gameDescription }, \nколичество мест - ${ maxPlayers }` );
         }
 
@@ -259,7 +255,7 @@ async function start() {
             if ( mapForListPlayers.has( userIDPlusOne ) ) {
 
                 mapForListPlayers.delete( userID + userID );
-                return bot.sendMessage( chatId, `"${ fullName }": -1, \n${ getMessAboutVacanciesAndReserve( LIST_OF_CHATS.get( chatId ) ) }` );            
+                await bot.sendMessage( chatId, `"${ fullName }": -1, \n${ getMessAboutVacanciesAndReserve( LIST_OF_CHATS.get( chatId ) ) }` );            
             } 
         }
 
