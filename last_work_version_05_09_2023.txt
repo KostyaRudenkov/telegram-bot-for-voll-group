@@ -239,9 +239,9 @@ async function start() {
 
         if ( text === 'инфа' ) {
 
-            console.log( LIST_OF_CHATS );
+            // console.log( LIST_OF_CHATS );
 
-            // return bot.sendMessage( chatId, `${ gameDescription }, \nколичество мест - ${ maxPlayers }` );
+            return bot.sendMessage( chatId, `${ gameDescription }, \nколичество мест - ${ maxPlayers }` );
         }
 
         // /FRIDAY, st.Gomselmash, 19.00-20.00, 2r. * 1
